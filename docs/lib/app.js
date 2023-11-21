@@ -6,10 +6,11 @@
 const path = require('path'); //  se importa aquí todo el metodode path, nombre del paquete
 const fs = require ('fs');
 const isMarkdownFile = require ('./isMarkdown');
+const extracLinks = require('./links.js')
 const { rejects } = require('assert');
-const readFile = require ('./readFile');
+const readFile = require ('./readFile.js');
 const mdLinks = (route) => { // route = ruta
-
+const mdLinks = require("md-links");
     try {
         return new Promise ((resolve, reject) => {
             const absolute = path.resolve (route); //absolute = absoluta
@@ -17,8 +18,12 @@ const mdLinks = (route) => { // route = ruta
             if (pathExists){
     
                 if (isMarkdownFile(absolute)){
-                    const contenido = readFile (absolute);
-                    resolve (contenido); 
+                    readFile (absolute).then((res)=>{
+                       const array =  extracLinks(res, absolute)
+                       console.log(array, '***********');
+                        resolve(res)
+                    })
+                     
                 } else {
                     reject (new Error("no es un archivo Markdown"));
                 }    
